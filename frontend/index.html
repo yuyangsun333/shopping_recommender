@@ -6,20 +6,21 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<h1>Beauty Recommender</h1>
+<h1>Beauty Recommender System</h1>
 
-<div class="form-container">
-    <select id="mode">
-        <option value="user">User-Based</option>
-        <option value="item">Item-Based</option>
-    </select>
-
-    <input type="text" id="inputId" placeholder="Enter User ID or Product ID">
-
-    <button onclick="getRecommendation()">Recommend</button>
+<div class="input-section">
+    <h2>User-based Recommendation</h2>
+    <input type="text" id="userIdInput" placeholder="Enter User ID">
+    <button onclick="recommendByUser()">Get Recommendations</button>
+    <div id="userRecommendations"></div>
 </div>
 
-<div id="result"></div>
+<div class="input-section">
+    <h2>Item-based Recommendation</h2>
+    <input type="text" id="itemIdInput" placeholder="Enter Product ID">
+    <button onclick="recommendByItem()">Get Recommendations</button>
+    <div id="itemRecommendations"></div>
+</div>
 
 <script src="app.js"></script>
 </body>

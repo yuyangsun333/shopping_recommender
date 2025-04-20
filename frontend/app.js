@@ -1,27 +1,21 @@
-async function getRecommendation() {
-    const mode = document.getElementById("mode").value;
-    const id = document.getElementById("inputId").value;
+async function recommendByUser() {
+    const userId = document.getElementById('userIdInput').value;
+    if (!userId) return alert('Please enter a User ID.');
 
-    let url = "";
+    const response = await fetch(`http://localhost:3000/user-recommend/${userId}`);
+    const data = await response.json();
 
-    if (mode === "user") {
-        url = `http://localhost:3000/recommend/user/${id}`;
-    } else {
-        url = `http://localhost:3000/recommend/item/${id}`;
-    }
+    document.getElementById('userRecommendations').innerHTML =
+        '<h3>Recommendations:</h3><ul>' + data.recommendations.map(item => `<li>${item}</li>`).join('') + '</ul>';
+}
 
-    try {
-        const response = await fetch(url);
-        const recommendations = await response.json();
+async function recommendByItem() {
+    const itemId = document.getElementById('itemIdInput').value;
+    if (!itemId) return alert('Please enter a Product ID.');
 
-        document.getElementById("result").innerHTML = `
-            <h2>Recommendations:</h2>
-            <ul>
-                ${recommendations.map(item => `<li>${item}</li>`).join('')}
-            </ul>
-        `;
-    } catch (error) {
-        console.error(error);
-        document.getElementById("result").innerHTML = "Error fetching recommendations.";
-    }
+    const response = await fetch(`http://localhost:3000/item-recommend/${itemId}`);
+    const data = await response.json();
+
+    document.getElementById('itemRecommendations').innerHTML =
+        '<h3>Recommendations:</h3><ul>' + data.recommendations.map(item => `<li>${item}</li>`).join('') + '</ul>';
 }

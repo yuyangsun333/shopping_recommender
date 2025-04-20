@@ -1,8 +1,11 @@
 import fs from 'fs';
 
-// Load and parse the dataset once when server starts
-const rawData = fs.readFileSync('data/cleaned_beauty.json');
-const reviews = JSON.parse(rawData);
+const rawData = fs.readFileSync('data/cleaned_beauty.json', 'utf-8').split('\n');
+
+const reviews = rawData
+    .filter(line => line.trim() !== '')
+    .map(line => JSON.parse(line));
+
 
 // Build product ➔ [users who liked it]
 const productUserMap = {};
