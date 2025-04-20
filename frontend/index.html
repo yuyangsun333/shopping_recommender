@@ -9,58 +9,36 @@
 <h1>Smart Beauty Assistant</h1>
 
 <div class="section">
-    <div class="section-title">Find Products for Me</div>
+    <div class="section-title">Find Products That Match Me</div>
 
-    <div class="field-group">
-        <label for="skinType">Skin Type:</label>
-        <select id="skinType">
-            <option>Oily</option>
-            <option>Dry</option>
-            <option>Combination</option>
-            <option>Normal</option>
-            <option>Sensitive</option>
-        </select>
+    <label>Skin Type</label>
+    <select id="skinType">
+        <option value="">Any</option>
+        <option>Oily</option><option>Dry</option>
+        <option>Combination</option><option>Normal</option><option>Sensitive</option>
+    </select>
+
+    <label>Price Range ($)</label>
+    <div class="row">
+        <input id="minPrice" type="number" placeholder="min" />
+        <input id="maxPrice" type="number" placeholder="max" />
     </div>
 
-    <div class="field-group">
-        <label for="skinColor">Skin Color:</label>
-        <select id="skinColor">
-            <option>Fair</option>
-            <option>Medium</option>
-            <option>Tan</option>
-            <option>Dark</option>
-        </select>
-    </div>
+    <label>Minimum Rating ⭐</label>
+    <select id="minRating">
+        <option value="0">Any</option><option value="3">3+</option><option value="4">4+</option>
+    </select>
 
-    <div class="field-group">
-        <label for="priceRange">Price Range:</label>
-        <select id="priceRange">
-            <option>Low ($0 - $30)</option>
-            <option>Medium ($30 - $70)</option>
-            <option>High ($70+)</option>
-        </select>
-    </div>
+    <label>Brand (optional)</label>
+    <input id="brandInput" placeholder="e.g. Dior" />
 
-    <div class="field-group">
-        <label for="ratingPref">Rating Preference:</label>
-        <select id="ratingPref">
-            <option>Any</option>
-            <option>4 stars and up</option>
-        </select>
-    </div>
-
-    <button onclick="recommendByContent()">Recommend</button>
+    <button onclick="runFilter()">Recommend by Attributes</button>
 </div>
 
 <div class="section">
-    <div class="section-title">Find Similar Products</div>
-
-    <div class="field-group">
-        <label for="similarInput">Product ID or Keyword (e.g., toner, moisturizer):</label>
-        <input type="text" id="similarInput" placeholder="Enter product keyword...">
-    </div>
-
-    <button onclick="recommendBySimilarity()">Recommend</button>
+    <div class="section-title">Find Products by Keyword</div>
+    <input id="keyword" placeholder="Enter a keyword (e.g., toner, moisturizer)" />
+    <button onclick="runContent()">Recommend by Keyword</button>
 </div>
 
 <div id="results"></div>

@@ -1,42 +1,51 @@
-const backendUrl = 'http://localhost:3000';
+const BACK = 'http://localhost:3000';
 
-async function recommendByContent() {
+async function runFilter() {
     const skinType = document.getElementById('skinType').value;
-    const skinColor = document.getElementById('skinColor').value;
-    const priceRange = document.getElementById('priceRange').value.split(' ')[0]; // Extract Low/Medium/High
-    const ratingPref = document.getElementById('ratingPref').value;
+    const priceMin = document.getElementById('minPrice').value;
+    const priceMax = document.getElementById('maxPrice').value;
+    const minRating = document.getElementById('minRating').value;
+    const brand    = document.getElementById('brandInput').value.trim();
 
-    const query = `${skinType},${skinColor},${priceRange},${ratingPref}`;
+    const body = {};
+    if (skinType) body.skinType = skinType;
+    if (priceMin) body.priceMin = Number(priceMin);
+    if (priceMax) body.priceMax = Number(priceMax);
+    if (minRating) body.minRating = Number(minRating);
+    if (brand) body.brand = brand;
 
-    const res = await fetch(`${backendUrl}/recommend/content?q=${encodeURIComponent(query)}`);
+    const res  = await fetch(`${BACK}/recommend/filter`, {
+        method : 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body   : JSON.stringify(body)
+    });
+
     const data = await res.json();
-
-    displayResults(data, 'Content-Based Recommendations');
+    render(data, 'Attribute-Based Recommendations');
 }
 
-async function recommendBySimilarity() {
-    const input = document.getElementById('similarInput').value.trim();
-    if (!input) return alert('Please enter a product keyword.');
 
-    const res = await fetch(`${backendUrl}/recommend/collab?q=${encodeURIComponent(input)}`);
+async function runContent() {
+    const kw = document.getElementById('keyword').value.trim();
+    if (!kw) return alert('Please enter a keyword!');
+    const res = await fetch(`${BACK}/recommend/content?q=${encodeURIComponent(kw)}`);
     const data = await res.json();
-
-    displayResults(data, 'Similar Products');
+    render(data, 'Content-Based Recommendations');
 }
 
-function displayResults(products, title) {
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = `<h2>${title}</h2>`;
-
-    if (products.length === 0) {
-        resultsDiv.innerHTML += '<p>No products found matching your query.</p>';
-        return;
-    }
-
-    for (const product of products) {
-        const div = document.createElement('div');
-        div.className = 'result-item';
-        div.textContent = product;
-        resultsDiv.appendChild(div);
-    }
+function render(list, title) {
+    const out = document.getElementById('results');
+    out.innerHTML = `<h3>${title}</h3>`;
+    if (!list.length) { out.innerHTML += '<p>No products found.</p>'; return; }
+    list.forEach(p => {
+        out.innerHTML += `
+            <div class="result-item">
+                <strong>${p.product_name}</strong><br>
+                Brand: ${p.brand} • $${p.price} • ⭐${p.rating}
+            </div>
+        `;
+    });
 }
+
+window.runFilter = runFilter;
+window.runContent = runContent;

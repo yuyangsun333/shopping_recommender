@@ -28,10 +28,6 @@ h1 {
     color: #333;
 }
 
-.field-group {
-    margin-bottom: 15px;
-}
-
 label {
     display: block;
     font-weight: bold;
@@ -39,12 +35,13 @@ label {
     color: #555;
 }
 
-select, input[type="text"] {
+select, input[type="text"], input[type="number"] {
     width: 100%;
     padding: 10px;
     font-size: 16px;
     border-radius: 8px;
     border: 1px solid #ccc;
+    margin-bottom: 15px;
 }
 
 button {
