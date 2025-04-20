@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Beauty Recommender</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<h1>Beauty Recommender</h1>
+
+<div class="card">
+    <h3>User‑based</h3>
+    <input id="userId" placeholder="Enter user_id" />
+    <button onclick="getUserRec()">Recommend</button>
+</div>
+
+<div class="card">
+    <h3>Item‑based</h3>
+    <input id="prodId" placeholder="Enter product_id" />
+    <button onclick="getItemRec()">Recommend</button>
+</div>
+
+<pre id="out"></pre>
+<script src="app.js"></script>
+</body>
+</html>

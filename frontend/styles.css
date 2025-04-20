@@ -1,0 +1,5 @@
+body { font-family: system-ui; margin: 2rem; }
+.card { margin-bottom: 1rem; }
+input { width: 240px; padding: 4px; }
+button { padding: 4px 10px; margin-left: 6px; }
+pre { background:#f5f5f5; padding:10px; white-space:pre-wrap;}
