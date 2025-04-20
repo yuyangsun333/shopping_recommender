@@ -1,21 +1,20 @@
 import fs from 'fs';
+import { getProductInfo } from '../loadMetadata.js';
 
+// Read and parse dataset
 const rawData = fs.readFileSync('data/cleaned_beauty.json', 'utf-8').split('\n');
-
 const reviews = rawData
     .filter(line => line.trim() !== '')
     .map(line => JSON.parse(line));
 
 
-// Build product ➔ [users who liked it]
 const productUserMap = {};
 
-for (const review of reviews) {
-    const { user_id, product_id, rating } = review;
-    if (!productUserMap[product_id]) {
-        productUserMap[product_id] = new Set();
-    }
-    if (rating >= 4) { // Only count if liked
+for (const { user_id, product_id, rating } of reviews) {
+    if (rating >= 4) {   // Only consider liked
+        if (!productUserMap[product_id]) {
+            productUserMap[product_id] = new Set();
+        }
         productUserMap[product_id].add(user_id);
     }
 }
@@ -29,17 +28,18 @@ function findSimilarProducts(targetProductId) {
 
     for (const [productId, users] of Object.entries(productUserMap)) {
         if (productId === targetProductId) continue;
-        const intersection = [...users].filter(x => targetUsers.has(x));
-        similarity.push({ productId, commonCount: intersection.length });
+        const overlap = [...users].filter(u => targetUsers.has(u));
+        similarity.push({ productId, score: overlap.length });
     }
 
-    similarity.sort((a, b) => b.commonCount - a.commonCount);
-
-    return similarity.map(entry => entry.productId);
+    return similarity.sort((a,b)=>b.score - a.score).map(p => p.productId);
 }
 
-// Recommend similar products
+// Final exported function
 export async function itemBasedRecommend(productId) {
-    const similarProducts = findSimilarProducts(productId).slice(0, 10); // Top 10 similar
-    return similarProducts;
+    const similar = findSimilarProducts(productId).slice(0, 10); // top-10
+    return similar.map(id => {
+        const info = getProductInfo(id);
+        return `${info.title} by ${info.brand}`;
+    });
 }

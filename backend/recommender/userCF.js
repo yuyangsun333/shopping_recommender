@@ -1,7 +1,8 @@
 import fs from 'fs';
+import { getProductInfo } from '../loadMetadata.js';
 
+// Read and parse dataset
 const rawData = fs.readFileSync('data/cleaned_beauty.json', 'utf-8').split('\n');
-
 const reviews = rawData
     .filter(line => line.trim() !== '')
     .map(line => JSON.parse(line));
@@ -9,17 +10,16 @@ const reviews = rawData
 // Build user ➔ [products they liked]
 const userProductMap = {};
 
-for (const review of reviews) {
-    const { user_id, product_id, rating } = review;
-    if (!userProductMap[user_id]) {
-        userProductMap[user_id] = new Set();
-    }
-    if (rating >= 4) { // Only count if the user liked it (rating 4 or 5)
+for (const { user_id, product_id, rating } of reviews) {
+    if (rating >= 4) {   // Only consider liked
+        if (!userProductMap[user_id]) {
+            userProductMap[user_id] = new Set();
+        }
         userProductMap[user_id].add(product_id);
     }
 }
 
-// Function to find similar users
+// Find similar users
 function findSimilarUsers(targetUserId) {
     const targetProducts = userProductMap[targetUserId];
     if (!targetProducts) return [];
@@ -28,27 +28,29 @@ function findSimilarUsers(targetUserId) {
 
     for (const [userId, products] of Object.entries(userProductMap)) {
         if (userId === targetUserId) continue;
-        const intersection = [...products].filter(x => targetProducts.has(x));
-        similarity.push({ userId, commonCount: intersection.length });
+        const overlap = [...products].filter(p => targetProducts.has(p));
+        similarity.push({ userId, score: overlap.length });
     }
 
-    similarity.sort((a, b) => b.commonCount - a.commonCount);
-
-    return similarity.map(entry => entry.userId);
+    return similarity.sort((a,b)=>b.score - a.score).map(u => u.userId);
 }
 
-// Recommend products
+// Final exported function
 export async function userBasedRecommend(userId) {
-    const similarUsers = findSimilarUsers(userId).slice(0, 5); // Top 5 similar users
-    const recommendedProducts = new Set();
+    const similarUsers = findSimilarUsers(userId).slice(0, 5); // top-5 similar users
+    const recommended = new Set();
 
-    for (const simUserId of similarUsers) {
-        for (const product of userProductMap[simUserId]) {
-            if (!userProductMap[userId].has(product)) {
-                recommendedProducts.add(product);
+    for (const simUser of similarUsers) {
+        for (const product of userProductMap[simUser] || []) {
+            if (!userProductMap[userId]?.has(product)) {
+                recommended.add(product);
             }
         }
     }
 
-    return Array.from(recommendedProducts).slice(0, 10); // Top 10 recommendations
+    // Top 10 products, mapped to title + brand
+    return Array.from(recommended).slice(0, 10).map(id => {
+        const info = getProductInfo(id);
+        return `${info.title} by ${info.brand}`;
+    });
 }

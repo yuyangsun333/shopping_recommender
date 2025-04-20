@@ -2,6 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import { userBasedRecommend } from './recommender/userCF.js';
 import { itemBasedRecommend } from './recommender/itemCF.js';
+import { loadMetadataFromUrl } from './loadMetadata.js';
+
+// before starting API
+await loadMetadataFromUrl('https://datarepo.eng.ucsd.edu/mcauley_group/data/amazon_2023/raw/meta_categories/meta_All_Beauty.jsonl.gz');
+console.log('Metadata loaded. API starting...');
 
 const app = express();
 const PORT = 3000;
