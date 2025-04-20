@@ -1,46 +1,52 @@
-import { loadRows } from "../dataLoader.js";
+import fs from 'fs';
 
-/** build user→{item:rating} sparse map */
-function buildUserMap(rows) {
-    const map = {};
-    rows.forEach(r => {
-        (map[r.user_id] ??= {})[r.product_id] = r.rating;
-    });
-    return map;
+// Load and parse the dataset once when server starts
+const rawData = fs.readFileSync('data/cleaned_beauty.json');
+const reviews = JSON.parse(rawData);
+
+// Build user ➔ [products they liked]
+const userProductMap = {};
+
+for (const review of reviews) {
+    const { user_id, product_id, rating } = review;
+    if (!userProductMap[user_id]) {
+        userProductMap[user_id] = new Set();
+    }
+    if (rating >= 4) { // Only count if the user liked it (rating 4 or 5)
+        userProductMap[user_id].add(product_id);
+    }
 }
 
-/** naive overlap similarity & top‑N recommendations */
-export function recommendUserCF(targetUserId, topN = 10) {
-    const rows  = loadRows();
-    const users = buildUserMap(rows);
-    const target = users[targetUserId];
-    if (!target) return [];
+// Function to find similar users
+function findSimilarUsers(targetUserId) {
+    const targetProducts = userProductMap[targetUserId];
+    if (!targetProducts) return [];
 
-    const sim = {};
-    for (const [u, ratings] of Object.entries(users)) {
-        if (u === targetUserId) continue;
-        let overlap = 0;
-        for (const item of Object.keys(target)) {
-            if (item in ratings) overlap++;
-        }
-        if (overlap) sim[u] = overlap;
+    const similarity = [];
+
+    for (const [userId, products] of Object.entries(userProductMap)) {
+        if (userId === targetUserId) continue;
+        const intersection = [...products].filter(x => targetProducts.has(x));
+        similarity.push({ userId, commonCount: intersection.length });
     }
 
-    const topSimilar = Object.entries(sim)
-        .sort((a,b)=>b[1]-a[1])
-        .slice(0, 20)
-        .map(([u]) => u);
+    similarity.sort((a, b) => b.commonCount - a.commonCount);
 
-    const score = {};
-    for (const u of topSimilar) {
-        for (const [item, rating] of Object.entries(users[u])) {
-            if (item in target) continue;
-            score[item] = (score[item] ?? 0) + rating;
+    return similarity.map(entry => entry.userId);
+}
+
+// Recommend products
+export async function userBasedRecommend(userId) {
+    const similarUsers = findSimilarUsers(userId).slice(0, 5); // Top 5 similar users
+    const recommendedProducts = new Set();
+
+    for (const simUserId of similarUsers) {
+        for (const product of userProductMap[simUserId]) {
+            if (!userProductMap[userId].has(product)) {
+                recommendedProducts.add(product);
+            }
         }
     }
 
-    return Object.entries(score)
-        .sort((a,b)=>b[1]-a[1])
-        .slice(0, topN)
-        .map(([item]) => item);
+    return Array.from(recommendedProducts).slice(0, 10); // Top 10 recommendations
 }

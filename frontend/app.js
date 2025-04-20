@@ -1,22 +1,27 @@
-const API = "http://localhost:3000";
+async function getRecommendation() {
+    const mode = document.getElementById("mode").value;
+    const id = document.getElementById("inputId").value;
 
-async function getUserRec() {
-    const uid = document.getElementById("uid").value.trim();
-    if (!uid) return;
-    const r   = await fetch(`${API}/recommend/user/${uid}`);
-    const { recommendations } = await r.json();
-    render(recommendations, `Top products for user ${uid}`);
-}
+    let url = "";
 
-async function getItemRec() {
-    const pid = document.getElementById("pid").value.trim();
-    if (!pid) return;
-    const r   = await fetch(`${API}/recommend/item/${pid}`);
-    const { recommendations } = await r.json();
-    render(recommendations, `Products similar to ${pid}`);
-}
+    if (mode === "user") {
+        url = `http://localhost:3000/recommend/user/${id}`;
+    } else {
+        url = `http://localhost:3000/recommend/item/${id}`;
+    }
 
-function render(list, title) {
-    const box = document.getElementById("out");
-    box.textContent = `${title}\n——————————————\n` + list.join("\n");
+    try {
+        const response = await fetch(url);
+        const recommendations = await response.json();
+
+        document.getElementById("result").innerHTML = `
+            <h2>Recommendations:</h2>
+            <ul>
+                ${recommendations.map(item => `<li>${item}</li>`).join('')}
+            </ul>
+        `;
+    } catch (error) {
+        console.error(error);
+        document.getElementById("result").innerHTML = "Error fetching recommendations.";
+    }
 }

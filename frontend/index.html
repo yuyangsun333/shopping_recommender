@@ -1,25 +1,26 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-        <meta charset="utf-8" />
-        <title>Beauty Recommender</title>
-        <link rel="stylesheet" href="styles.css" />
-    </head>
-    <body>
-    <h1>Beauty Recommender</h1>
+    <meta charset="UTF-8">
+    <title>Beauty Recommender</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Beauty Recommender</h1>
 
-    <div class="card">
-        <h3>User‑based</h3>
-        <input id="userId" placeholder="Enter user_id" />
-        <button onclick="getUserRec()">Recommend</button>
-    </div>
+<div class="form-container">
+    <select id="mode">
+        <option value="user">User-Based</option>
+        <option value="item">Item-Based</option>
+    </select>
 
-    <section class="card">
-        <h3>Item‑based (similar products)</h3>
-        <input id="pid" placeholder="enter product_id (parent_asin)" />
-        <button onclick="getItemRec()">Go</button>
-    </section>
+    <input type="text" id="inputId" placeholder="Enter User ID or Product ID">
 
-    <pre id="out"></pre>
-    <script src="app.js"></script>
-    </body>
+    <button onclick="getRecommendation()">Recommend</button>
+</div>
+
+<div id="result"></div>
+
+<script src="app.js"></script>
+</body>
 </html>
