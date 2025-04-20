@@ -1,36 +1,36 @@
 import express from 'express';
 import cors from 'cors';
-import { userBasedRecommend } from './recommender/userCF.js';
-import { itemBasedRecommend } from './recommender/itemCF.js';
-import { loadMetadataFromUrl } from './loadMetadata.js';
-
-// before starting API
-await loadMetadataFromUrl('https://datarepo.eng.ucsd.edu/mcauley_group/data/amazon_2023/raw/meta_categories/meta_All_Beauty.jsonl.gz');
-console.log('Metadata loaded. API starting...');
+import { contentBasedRecommend, collaborativeFilteringRecommend } from './recommender/index.js';
 
 const app = express();
 const PORT = 3000;
 
 app.use(cors());
+app.use(express.json());
 
+// Home
 app.get('/', (req, res) => {
-    res.send('Beauty Recommender API');
+    res.send('Beauty Recommender API is running');
 });
 
-// User-Based Recommendation
-app.get('/recommend/user/:userId', async (req, res) => {
-    const userId = req.params.userId;
-    const recommendations = await userBasedRecommend(userId);
-    res.json(recommendations);
+// Content-Based
+app.get('/recommend/content', (req, res) => {
+    const query = req.query.q;
+    if (!query) return res.status(400).send({ error: 'Missing query' });
+
+    const recommendations = contentBasedRecommend(query);
+    res.send(recommendations);
 });
 
-// Item-Based Recommendation
-app.get('/recommend/item/:itemId', async (req, res) => {
-    const itemId = req.params.itemId;
-    const recommendations = await itemBasedRecommend(itemId);
-    res.json(recommendations);
+// Collaborative Filtering
+app.get('/recommend/collab', (req, res) => {
+    const query = req.query.q;
+    if (!query) return res.status(400).send({ error: 'Missing query' });
+
+    const recommendations = collaborativeFilteringRecommend(query);
+    res.send(recommendations);
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server running at http://localhost:${PORT}`);
 });

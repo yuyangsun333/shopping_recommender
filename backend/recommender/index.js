@@ -1,2 +1,2 @@
-export { recommendUserCF } from "./userCF.js";
-export { recommendItemCF } from "./itemCF.js";
+export { contentBasedRecommend } from './contentBased.js';
+export { collaborativeFilteringRecommend } from './collaborativeFilter.js';

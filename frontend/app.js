@@ -1,49 +1,42 @@
-const userButton = document.getElementById('userButton');
-const itemButton = document.getElementById('itemButton');
-const userInput = document.getElementById('userInput');
-const itemInput = document.getElementById('itemInput');
-const resultDiv = document.getElementById('result');
+const backendUrl = 'http://localhost:3000';
 
-userButton.addEventListener('click', async () => {
-    const userId = userInput.value.trim();
-    if (!userId) {
-        resultDiv.innerHTML = '<p>Please enter a User ID.</p>';
+async function recommendByContent() {
+    const skinType = document.getElementById('skinType').value;
+    const skinColor = document.getElementById('skinColor').value;
+    const priceRange = document.getElementById('priceRange').value.split(' ')[0]; // Extract Low/Medium/High
+    const ratingPref = document.getElementById('ratingPref').value;
+
+    const query = `${skinType},${skinColor},${priceRange},${ratingPref}`;
+
+    const res = await fetch(`${backendUrl}/recommend/content?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+
+    displayResults(data, 'Content-Based Recommendations');
+}
+
+async function recommendBySimilarity() {
+    const input = document.getElementById('similarInput').value.trim();
+    if (!input) return alert('Please enter a product keyword.');
+
+    const res = await fetch(`${backendUrl}/recommend/collab?q=${encodeURIComponent(input)}`);
+    const data = await res.json();
+
+    displayResults(data, 'Similar Products');
+}
+
+function displayResults(products, title) {
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = `<h2>${title}</h2>`;
+
+    if (products.length === 0) {
+        resultsDiv.innerHTML += '<p>No products found matching your query.</p>';
         return;
     }
 
-    try {
-        const response = await fetch(`http://localhost:3000/recommend/user/${userId}`);
-        const data = await response.json();
-        displayResults(data);
-    } catch (error) {
-        resultDiv.innerHTML = '<p>Error fetching recommendations.</p>';
-        console.error(error);
+    for (const product of products) {
+        const div = document.createElement('div');
+        div.className = 'result-item';
+        div.textContent = product;
+        resultsDiv.appendChild(div);
     }
-});
-
-itemButton.addEventListener('click', async () => {
-    const itemId = itemInput.value.trim();
-    if (!itemId) {
-        resultDiv.innerHTML = '<p>Please enter a Product ID.</p>';
-        return;
-    }
-
-    try {
-        const response = await fetch(`http://localhost:3000/recommend/item/${itemId}`);
-        const data = await response.json();
-        displayResults(data);
-    } catch (error) {
-        resultDiv.innerHTML = '<p>Error fetching recommendations.</p>';
-        console.error(error);
-    }
-});
-
-function displayResults(recommendations) {
-    if (recommendations.length === 0) {
-        resultDiv.innerHTML = '<p>No recommendations found.</p>';
-        return;
-    }
-
-    const list = recommendations.map(item => `<li>${item}</li>`).join('');
-    resultDiv.innerHTML = `<ul>${list}</ul>`;
 }
