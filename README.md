@@ -96,6 +96,7 @@ shopping_recommender/
 - **Algorithms**:
   - TF-IDF + Cosine Similarity (Content-Based Filtering)
   - Rule-Based Attribute Filtering (Attribute-Based Filtering)
+  - Hash table
 
 ---
 
