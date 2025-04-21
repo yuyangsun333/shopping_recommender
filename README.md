@@ -1,6 +1,6 @@
 # Smart Beauty Assistant
 
-Welcome to **Smart Beauty Assistant** — your intelligent guide to discovering beauty products tailored to your skin type, preferences, and needs! ✨
+Welcome to **Smart Beauty Assistant** — your intelligent guide to discovering beauty products tailored to your skin type, preferences, and needs!
 
 This project compares and implements two different recommendation approaches, using a large real-world dataset to demonstrate the power of both **attribute-based filtering** and **content-based filtering**.
 
@@ -22,6 +22,27 @@ This project compares and implements two different recommendation approaches, us
 		- TF-IDF (bag-of-words) + cosine similarity based on product names and reviews.
 	- **Attribute-Based Filtering**:
 		- Matching based on user input (skin type, price range, brand, minimum rating).
+
+---
+
+## 🧠 Data Structures and Algorithms Used
+
+This project uses non-trivial data structures to meet the course project requirements:
+
+### 1. Hash Tables for Fast Lookup
+- All product data is loaded into in-memory JavaScript objects (arrays of product objects).
+- Filtering by attributes (skin type, price range, brand, etc.) uses **hash table lookup**.
+- JavaScript's native object and array access ( `{}` and `[]` ) achieves **O(1)** average time complexity for lookups.
+- This ensures that even with 100,000+ products, filtering remains extremely fast.
+
+### 2. Content-Based Filtering (TF-IDF + Cosine Similarity)
+- When users search by keyword, product names and reviews are transformed into **TF-IDF vectors**.
+- Cosine similarity between vectors is used to find products that are most similar to the search keyword.
+- This method models text similarity efficiently and works well with unstructured review data.
+
+### 3. Attribute-Based Recommendation (Simulated Collaborative Filtering)
+- Users can specify skin type, price range, minimum rating, and brand.
+- The system finds matching products using attribute-based filtering, similar to collaborative recommendation.
 
 ---
 
