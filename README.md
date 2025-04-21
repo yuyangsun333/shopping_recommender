@@ -25,7 +25,7 @@ This project compares and implements two different recommendation approaches, us
 
 ---
 
-## 🧠 Data Structures and Algorithms Used
+## Data Structures and Algorithms Used
 
 This project uses non-trivial data structures to meet the course project requirements:
 
