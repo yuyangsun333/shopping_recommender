@@ -17,12 +17,12 @@ app.get('/recommend/content', (req, res) => {
 app.post('/recommend/filter', (req, res) => {
     const opts = {
         skinType: req.body.skinType || null,
-        priceMin: Number(req.body.priceMin) || 0,
-        priceMax: Number(req.body.priceMax) || 9999,
-        minRating: Number(req.body.minRating) || 0,
+        priceMin: req.body.priceMin ? Number(req.body.priceMin) : null,
+        priceMax: req.body.priceMax ? Number(req.body.priceMax) : null,
+        minRating: req.body.minRating ? Number(req.body.minRating) : null,
         brand: req.body.brand || null
     };
     res.json(attributeFilterRecommend(opts));
 });
 
-app.listen(PORT, () => console.log(`API running at http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`✅ API running at http://localhost:${PORT}`));

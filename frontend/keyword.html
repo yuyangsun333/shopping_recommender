@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Smart Beauty Assistant</title>
+    <title>Find Products by Keyword</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,9 +13,14 @@
 </nav>
 
 <div class="container">
-    <h1>Welcome to Smart Beauty Assistant</h1>
-    <p>Your personalized beauty product recommendation system.
-        Find the perfect match based on your skin type, preferences, or simply search by keywords!</p>
+    <h1>Find Products by Keyword</h1>
+
+    <input id="keyword" placeholder="Enter a keyword (e.g., toner, serum)" />
+    <button onclick="runContent()">Recommend by Keyword</button>
+
+    <div id="results"></div>
 </div>
+
+<script src="app.js"></script>
 </body>
 </html>

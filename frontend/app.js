@@ -7,12 +7,13 @@ async function runFilter() {
     const minRating = document.getElementById('minRating').value;
     const brand    = document.getElementById('brandInput').value.trim();
 
-    const body = {};
-    if (skinType) body.skinType = skinType;
-    if (priceMin) body.priceMin = Number(priceMin);
-    if (priceMax) body.priceMax = Number(priceMax);
-    if (minRating) body.minRating = Number(minRating);
-    if (brand) body.brand = brand;
+    const body = {
+        skinType: skinType || null,
+        priceMin: priceMin ? Number(priceMin) : null,
+        priceMax: priceMax ? Number(priceMax) : null,
+        minRating: minRating ? Number(minRating) : null,
+        brand: brand || null
+    };
 
     const res  = await fetch(`${BACK}/recommend/filter`, {
         method : 'POST',
@@ -23,7 +24,6 @@ async function runFilter() {
     const data = await res.json();
     render(data, 'Attribute-Based Recommendations');
 }
-
 
 async function runContent() {
     const kw = document.getElementById('keyword').value.trim();

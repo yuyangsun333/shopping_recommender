@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Find Products That Match Me</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<nav>
+    <a href="index.html">Home</a>
+    <a href="match.html">Find Products That Match Me</a>
+    <a href="keyword.html">Find Products by Keyword</a>
+</nav>
+
+<div class="container">
+    <h1>Find Products That Match Me</h1>
+
+    <label>Skin Type</label>
+    <select id="skinType">
+        <option value="">Any</option>
+        <option>Oily</option><option>Dry</option>
+        <option>Combination</option><option>Normal</option><option>Sensitive</option>
+    </select>
+
+    <label>Price Range ($)</label>
+    <div class="row">
+        <input id="minPrice" type="number" placeholder="min" />
+        <input id="maxPrice" type="number" placeholder="max" />
+    </div>
+
+    <label>Minimum Rating ⭐</label>
+    <select id="minRating">
+        <option value="0">Any</option><option value="3">3+</option><option value="4">4+</option>
+    </select>
+
+    <label>Brand (optional)</label>
+    <input id="brandInput" placeholder="e.g. Dior" />
+
+    <button onclick="runFilter()">Recommend by Attributes</button>
+
+    <div id="results"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
